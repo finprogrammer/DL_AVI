@@ -80,17 +80,6 @@ from config_loader import load_config
 mode = "train_2"  # Change this to "debug" when debugging
 CONFI = load_config(mode)
 
-# tensorboard --logdir=
-# optuna-dashboard sqlite:///RGB__2ndretry__Sheet_metal_packaging_real.db --host 0.0.0.0 --port 7000
-
-###for printing the names of the layers 
-# for name, param in self.backbone.named_parameters():
-#     print(name) 
-
-# for param in self.classifier2.parameters():
-#         print(param.requires_grad)
-
-
 
 Sq_lite_file = "sqlite:///{}.db".format(CONFI["logger_version"])
 if mode == "train":
