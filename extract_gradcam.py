@@ -5,17 +5,10 @@ import cv2
 from torchvision.transforms import v2 as T
 import monai
 from PIL import Image
-
-# from extract_gradcam import grad_cam
-
-
 from config_loader import load_config
+
 mode = "train_2"  # Change this to "debug" when debugging
 CONFI = load_config(mode)
-
-# instance.grad_image
-
-
 
 class grad_cam(object):
     def __init__(self, iter = None, x2=None, Gradcam_save_dir=None, val_batch=None, logger_version=None, backbone = None, match_indices = None, ROOT_DIR = None):
