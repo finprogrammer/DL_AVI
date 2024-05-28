@@ -19,10 +19,6 @@ from torch.utils.data import WeightedRandomSampler
 from dataloader import (
     MultiViewDataset
 )
-from loss_function import (
-    WeightedCrossEntropyLoss,
-    WeightedBinaryCrossEntropyLoss,
-)
 from network import (
     DeepCNN
 )
