@@ -1,5 +1,4 @@
 from collections import OrderedDict
-
 from pytorch_lightning import LightningModule
 from sklearn.metrics import (
     accuracy_score,
@@ -23,16 +22,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 import torchvision.transforms as transforms
 from PIL import Image, ImageDraw
-
 import monai
 from torchvision.transforms import v2 as T
 from pytorch_grad_cam.utils.image import show_cam_on_image
 from config_loader import load_config
 from extract_gradcam import grad_cam
-
-
-
 from config_loader import load_config
+
 mode = "train_2"  # Change this to "debug" when debugging
 CONFI = load_config(mode)
 
@@ -48,9 +44,7 @@ Prediction_Def = []
 FP = []
 FN = []
 iteration_count = 0
-
 dinov2_vits14 = torch.hub.load("facebookresearch/dinov2", "dinov2_vits14")
-
 
 class DeepCNN(LightningModule):
     def __init__(
@@ -150,8 +144,6 @@ class DeepCNN(LightningModule):
             x = train_batch[view]
             target_ = train_batch["label"]
             pred = self(x)
-            
-            
             pred = pred.squeeze()
             #pred_scalar = pred.item()
             #pred = torch.tensor([pred_scalar])             
@@ -204,10 +196,6 @@ class DeepCNN(LightningModule):
                 save_path_img = os.path.join(folder, filename)
                 img.save(save_path_img, format="JPEG")
 
-                # dict_file = os.path.join(folder, "image_count_dict.txt")
-                # with open(dict_file, "w") as f:
-                #     for key, value in self.image_count.items():
-                #         f.write(f"{key}: {value}\n")
 
         accuracy = accuracy_score(target, pred)
         f1 = f1_score(target, pred)
@@ -283,141 +271,6 @@ class DeepCNN(LightningModule):
             ROOT_DIR = self.ROOT_DIR
             )
             instance.grad_image()
-
-
-
-        # if CONFI['Extract_Gradcam'] == True:
-
-        #     target_1 = target_.cpu().argmax(axis=1).numpy()
-        #     pred_1 = pred_.cpu().argmax(axis=1).numpy()
-        #     target_1 = torch.from_numpy(target_1)
-        #     pred_1 = torch.from_numpy(pred_1)
-        #     global iter
-        #     iter += 1
-        #     folder = "/home/vault/iwfa/iwfa048h/grad_cam/cable_swin_75rot"
-        #     os.makedirs(folder, exist_ok=True)
-        #     with torch.set_grad_enabled(True):
-        #             raw_image = x2[0]
-        #             raw_image = raw_image.squeeze(0)
-        #             view1 = raw_image
-        #             print(f"nor_std_aug = {view1.std(dim=(1, 2))}")
-        #             print(f"nor_mean_aug = {view1.mean(dim=(1, 2))}")
-        #             img_n = view1.cpu().numpy()
-        #             print(view1.shape)
-        #             min_value = np.min(img_n)
-        #             max_value = np.max(img_n)
-        #             print(f"Min Pixel Value after nor: {min_value}")
-        #             print(f"Max Pixel Value after nor: {max_value}")
-        #             img_n = view1.cpu().numpy()
-        #             max_value = np.max(img_n)
-        #             img = view1 / max_value
-        #             transform_to_pil = T.Compose([T.ToPILImage()])
-        #             img = transform_to_pil(img)
-        #             filename = f"11_05_cable_swin_{iter}.jpg" #val_batch["file_name"]#
-        #             #filename = filename[0]
-        #             save_path_img = os.path.join(folder, filename)
-        #             img.save(save_path_img)
-
-            
-        #             iter += 1
-        #             if iter % 10 == 0 and pred_1[0] == target_1[0] == 0:
-        #                 folder = "/home/vault/iwfa/iwfa048h/grad_cam/cable_densenet"
-        #                 os.makedirs(folder, exist_ok=True)
-        #                 with torch.set_grad_enabled(True):
-        #                     raw_image = x2[0]
-        #                     raw_image = raw_image.squeeze(0)
-        #             raw_image.requires_grad = True
-                    
-                
-        #             ###segmentation mask for class1
-        #             gradcam_img2 = self.gradcam(x=raw_image[None], class_idx=None)
-        #             view1 = gradcam_img2
-        #             view1 = view1.squeeze(0)
-        #             print(f"nor_std_aug = {view1.std(dim=(1, 2))}")
-        #             print(f"nor_mean_aug = {view1.mean(dim=(1, 2))}")
-        #             img_n = view1.cpu().numpy()
-        #             print(view1.shape)
-        #             min_value = np.min(img_n)
-        #             max_value = np.max(img_n)
-        #             print(f"Min Pixel Value after nor: {min_value}")
-        #             print(f"Max Pixel Value after nor: {max_value}")
-        #             img_n = view1.cpu().numpy()
-        #             max_value = np.max(img_n)
-        #             img = view1 / max_value
-        #             transform_to_pil = T.Compose([T.ToPILImage()])
-        #             img = transform_to_pil(img)
-        #             filename = f"cover_seg_mask_class1_{iter}.jpg"
-        #             save_path_class_1 = os.path.join(folder, filename)
-        #             img.save(save_path_class_1)
-                    
-
-        #             ###segmentation mask for class0
-        #             gradcam_img = self.gradcam(x=raw_image[None], class_idx=0)
-        #             view1 = gradcam_img
-        #             view1 = view1.squeeze(0)
-        #             print(f"nor_std_aug = {view1.std(dim=(1, 2))}")
-        #             print(f"nor_mean_aug = {view1.mean(dim=(1, 2))}")
-        #             img_n = view1.cpu().numpy()
-        #             print(view1.shape)
-        #             min_value = np.min(img_n)
-        #             max_value = np.max(img_n)
-        #             print(f"Min Pixel Value after nor: {min_value}")
-        #             print(f"Max Pixel Value after nor: {max_value}")
-        #             img_n = view1.cpu().numpy()
-        #             max_value = np.max(img_n)
-        #             img = view1 / max_value
-        #             transform_to_pil = T.Compose([T.ToPILImage()])
-        #             img = transform_to_pil(img)
-        #             filename = f"cover_seg_mask_class0_{iter}.jpg"
-        #             save_path_class_0 = os.path.join(folder, filename)
-        #             img.save(save_path_class_0)
-                    
-
-        #             ###save original image
-        #             raw_image = x2[0]
-        #             raw_image = raw_image.squeeze(0)
-        #             view1 = raw_image
-        #             print(f"nor_std_aug = {view1.std(dim=(1, 2))}")
-        #             print(f"nor_mean_aug = {view1.mean(dim=(1, 2))}")
-        #             img_n = view1.cpu().numpy()
-        #             print(view1.shape)
-        #             min_value = np.min(img_n)
-        #             max_value = np.max(img_n)
-        #             print(f"Min Pixel Value after nor: {min_value}")
-        #             print(f"Max Pixel Value after nor: {max_value}")
-        #             img_n = view1.cpu().numpy()
-        #             max_value = np.max(img_n)
-        #             img = view1 / max_value
-        #             transform_to_pil = T.Compose([T.ToPILImage()])
-        #             img = transform_to_pil(img)
-        #             filename = val_batch["image_name_string"]#f"cable_swin_{iter}.jpg"
-        #             filename = f"imggggcover_seg_mask_class0_{iter}.jpg"
-        #             save_path_img = os.path.join(folder, filename)
-        #             img.save(save_path_img)
-
-
-        #             ###combine original and the gradcam image for class 0
-        #             original_image = cv2.imread(save_path_img)
-        #             cam_image = cv2.imread(save_path_class_0)
-        #             original_image = cv2.convertScaleAbs(original_image)
-        #             cam_image = cv2.convertScaleAbs(cam_image)
-        #             heatmap = cv2.applyColorMap(cam_image, cv2.COLORMAP_JET)
-        #             heatmap = cv2.addWeighted(original_image, 0.5, heatmap, 0.5, 0)
-        #             filename = f"cover_heat_map_class0_{iter}.jpg"
-        #             save_path = os.path.join(folder, filename)
-        #             cv2.imwrite(save_path, heatmap)
-                    
-        #             ###combine original and the gradcam image for class 1
-        #             original_image = cv2.imread(save_path_img)
-        #             cam_image = cv2.imread(save_path_class_1)
-        #             original_image = cv2.convertScaleAbs(original_image)
-        #             cam_image = cv2.convertScaleAbs(cam_image)
-        #             heatmap = cv2.applyColorMap(cam_image, cv2.COLORMAP_JET)
-        #             heatmap = cv2.addWeighted(original_image, 0.5, heatmap, 0.5, 0)
-        #             filename = f"cover_heat_map_class_none_{iter}.jpg"
-        #             save_path = os.path.join(folder, filename)
-        #             cv2.imwrite(save_path, heatmap)
-
         return val_loss
 
     def test_step(self, test_batch, batch_idx):
