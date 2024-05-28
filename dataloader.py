@@ -8,14 +8,13 @@ from PIL import Image, ImageFilter, ImageEnhance
 from torchvision.transforms import v2 as T
 from torchvision.transforms import InterpolationMode
 import matplotlib.pyplot as plt
-
 from config_loader import load_config
+
 mode = "train_2"  # Change this to "debug" when debugging
 CONFI = load_config(mode)
     
 datatest = []
 dataval = []
-
 class MultiViewDataset(object):
     def __init__(
         self,
@@ -172,43 +171,6 @@ class MultiViewDataset(object):
         # background.paste(img, paste_position)
         # img = background
         output_size = (378, 378)
-        # if ~self.Val or ~self.Test:
-        #     data_transforms = T.Compose(
-        #         [
-        #             #T.ToTensor(),
-        #             T.Resize(output_size),
-        #             T.RandomHorizontalFlip(p=0.5),
-        #             #T.RandomRotation(degrees=(0,180)),
-        #             T.RandomVerticalFlip(p=0.5),
-        #             ###T.RandomAffine(degrees=(-45, 45), translate=(0.5, 0.4), scale=(0.8, 1.3)),#cable
-        #             #T.RandomAffine(degrees=(20, 20), translate=(0.1, 0.1), scale=(0.9, 1.9)),#SMP
-        #             #T.RandomAffine(degrees=(-45, 45), translate=(0.1, 0.1), scale=(0.8, 1.5)),#WH   
-        #             # transforms.ColorJitter(
-        #             #     brightness=[0.5, 1.5],
-        #             #     contrast=round(random.uniform(0,1), 1),
-        #             #     saturation=round(random.uniform(0,1), 1),
-        #             #     hue= round(random.uniform(0,0.5), 1)
-        #             # ),
-        #             T.RandomAffine(degrees=(-45, 45), translate=(0.2, 0.16), scale=(0.8, 1.3)),#w_h
-        #             #T.RandomAffine(degrees=(-45, 45), translate=(0.05, 0.06), scale=(0.8, 1.2)),#s_m_p
-        #             #T.RandomAffine(degrees=(-45, 45), translate=(0.06, 0.1), scale=(0.8, 1.1)),#cable
-        #             #T.RandomAffine(degrees=(-45, 45), translate=(0.2, 0.2), scale=(0.8, 1.3)),#cover
-
-        #             # transforms.RandomGrayscale(p=round(random.uniform(0.0, 1.0), 1)),
-        #             # transforms.GaussianBlur((random.randrange(1,51,2), random.randrange(1,51,2)+2), sigma=(0.1, 5.)),
-        #             T.ToTensor(),
-        #             T.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
-        #         ]
-        #     )
-        # else:
-        #     data_transforms = T.Compose(
-        #         [
-        #             T.Resize(output_size),
-        #             T.ToTensor(),
-        #             T.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
-        #         ]
-        #     )
-
         resize = T.Compose(
             [
             T.Resize(output_size),
@@ -226,10 +188,7 @@ class MultiViewDataset(object):
                 ]
             )
             img = data_transforms(img)
-
-
-
-
+            
         if self.normalize:
             nor = T.Compose(
                 [
@@ -238,9 +197,6 @@ class MultiViewDataset(object):
                 ]
             )
             img = nor(img)       
-
-        #img = data_transforms(img)
-
         return img
     
     def ar_nor(self,img):
@@ -260,12 +216,9 @@ class MultiViewDataset(object):
 
     def load_swin_image(self, path):
         img = Image.open(path)
-
         if self.Feature_extraction:
             img = self._Feature_extraction(img)
-
         #img = self.pre_process_img(img)
-
         swin_transform = T.Compose(
             [
                 T.ToTensor(),
@@ -274,16 +227,12 @@ class MultiViewDataset(object):
             ]
         )
         img = swin_transform(img)
-
         if self.transform:
             img = self.img_aug_tensor(img)
-
         img = self.ar_nor(img)    
-
         if self.pil_image_mode == "L":
             img = T.functional.to_grayscale(img)
             img = img.expand(3, -1, -1) 
-
         return img
 
     def pre_process_img(self, img):
@@ -302,12 +251,9 @@ class MultiViewDataset(object):
 
     def load_resnext_image(self, path):
         img = Image.open(path)
-
         if self.Feature_extraction:
             img = self._Feature_extraction(img)
-
         img = self.pre_process_img(img)
-
         # # Resize and crop
         # resize_size = 232
         # crop_size = 224
@@ -319,38 +265,13 @@ class MultiViewDataset(object):
         # )
         # img = res_transform(img)
         # img = T.ToTensor()(img)
-
         # # Normalize
         # img = self.ar_nor(img)
-
         if self.transform:
             img = self.img_aug_tensor(img)
-
         if self.pil_image_mode == "L":
             img = T.functional.to_grayscale(img)
             img = img.expand(3, -1, -1)
-        return img
-
-    def m_process_view(self, img):
-        new_w, new_h = self.image_size
-        # resize but keep aspect ratio
-        background = Image.new(self.pil_image_mode, (new_w, new_h))
-        img.thumbnail((new_w, new_h))
-        background.paste(img, (0, 0))
-        img = background
-        # img = np.asarray(img, dtype=np.float32)
-
-        img = np.asarray(img, dtype=np.float32)
-        if self.transform:
-            img = self.perform_augmentation(img)
-
-        if self.normalize:
-            img = self._normalize(img)
-
-        if self.pil_image_mode == "L":
-            img = np.expand_dims(img, 0).repeat(3, axis=0)
-        img = np.reshape(img, (3, new_h, new_w))
-        img = torch.from_numpy(img)
         return img
 
     def __len__(self):
@@ -398,17 +319,12 @@ class MultiViewDataset(object):
     def perform_augmentation(self, img):
         img = self.img_aug(image=img)
         return img
-
+        
     def _Feature_extraction(self, img):
         img = np.asarray(img, dtype=np.uint8)
         img = self.img_fd(image=img)
         img = Image.fromarray(np.asarray(img))
         return img
-
-
-
-
-
 
 if __name__ == "__main__":
 
