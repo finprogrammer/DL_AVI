@@ -1,0 +1,58 @@
+logger_version: "werewtrailresent"
+
+#   /Screw/WindingHead/Sheet_Metal_Package/Cover
+Component: "WindingHead"
+
+# Dinov2/resnext50_32x4d/efficientnet_v2_m/resnet50/swin_v2_b/densenet121/efficientnet_b5/resnet18/resnet34/resnet50/resnet101/efficientnet_v2_s
+Model: "swin_v2_b"
+
+# fc for resnet
+# classifier for densenet,
+# classifier[1] foe efficientnet,
+# head.fc. for swin,
+# head for swin pytorchs
+# efficientnet mmpretrain, head for deit
+BACKBONE: "head"
+
+SKIP_OPTUNA: False
+n_trials: 150
+
+IMAGE_MODE: "RGB"  # "L","RGB"
+H:  378  # 378 for dino
+W: 378  # lesss
+
+LR: 0.0000030894010637277747
+BATCHSIZE: 1
+WD: 0.0017960105252973267
+DROPOUT: 0.328659574153416
+NLAYERS: 2
+# efficientnet_v2_s = 7+1, efficientnet_v2_m = 8+1, resnext50_32x4d = 10
+ENDLAYERS: 8
+PATIENCE: 2
+PATIENCE_LR: 6
+BETA: 1
+SKIP_FREEZING_BATCHNORMALIZATION: true
+CKPT_PATH: "/home/vault/iwfa/iwfa048h/2024-04-29/WindingHead/Dinov2/at4__trial13__WH_NLMLP/checkpoint/last.ckpt" #mlp_dino_25_04
+#"/home/vault/iwfa/iwfa048h/2024-03-15/Cable/swin_v2_b/heavyaug___cable_swin_f1_label_optuna_/checkpoint/epoch=18-step=8569.ckpt"
+INFERENCE_CKPT_PATH: "/home/vault/iwfa/iwfa048h/2024-05-20/WindingHead/Dinov2/trial4_best_ipw____WH_NLMLP/checkpoint/epoch=16-step=5202.ckpt"
+NUM_NEURONS: [81, 479]
+
+QUANTITY_TO_OPTIMIZE: "val_loss"  # val_loss,f1_micro,f1,vall_acc,recall,f1_custom, f1_label, f1_notlabel, f1_beta_label
+DIRECTION_OF_OPTIMIZATION: "minimize"  # maximize,minimize
+DIRECTION_OF_OPTIMIZATION_SHORT: "min"  # max,min
+MINDELTA: 0.001
+
+SKIP_MISCLASSIFY: True
+fast_dev_run: True
+Extract_Gradcam: False
+Extract_reconstructed_image: True 
+
+EPOCHS: 200
+validation_interval: 1
+
+
+ACCELERATOR: "auto"  # "auto"
+optuna_tensorboard_study_name: logger_version  # name under which trials are lodded in tensorboard not the dashboard name
+
+TRAINER_OPTUNA_DIR: "/home/vault/iwfa/iwfa048h/CNN/TRAINER_OPTUNA_DIR_TRIAL"
+base_dir: "/home/vault/iwfa/iwfa048h/TRIAL"
