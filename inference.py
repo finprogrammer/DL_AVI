@@ -6,7 +6,6 @@ import optuna
 import torchvision
 import random
 import torch
-
 def set_seed(no):
     torch.manual_seed(no)
     random.seed(no)
@@ -15,9 +14,6 @@ def set_seed(no):
     torch.backends.cudnn.benchmark = False
     torch.backends.cudnn.deterministic = True
 set_seed(100)
-
-
-
 # seed = 100
 # random.seed(seed)
 # np.random.seed(seed)
@@ -61,7 +57,6 @@ from torch.utils.tensorboard import SummaryWriter
 import cProfile
 import cv2
 import monai
-#from din import Dino
 import json
 from make_folder import make_folder
 from extract_gradcam import grad_cam
@@ -76,15 +71,12 @@ if mode== "train":
 else:
     DEVICES = "auto" 
 
-
 folder_maker = make_folder(
     Component=CONFI["Component"],
     Model=CONFI["Model"],
     logger_version=CONFI["logger_version"],
     base_dir=CONFI["base_dir"],
 )
-
-
 (
     non_trail_hp_writer,
     trail_hp_writer,
@@ -97,9 +89,6 @@ folder_maker = make_folder(
     Reconstructed_image_save_dir, 
     Gradcam_save_dir
 ) = folder_maker.create_folders(base_dir=CONFI["base_dir"])
-
-
-
 ROOT_DIR = os.path.join(
     "/home/woody/iwfa/iwfa048h/Python-Code/database/data_processed/Classification/",
     CONFI['Component'],
@@ -107,20 +96,14 @@ ROOT_DIR = os.path.join(
 print(ROOT_DIR)
 test_csv_path = os.path.join(ROOT_DIR, "test.csv")
 val_csv_path = os.path.join(ROOT_DIR, "val.csv")
-
 views = ["file_name"]
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-
 # Order matter for labels
 labels = ["label", "~label"]
-
 num_classes = len(labels)
-
 validation_interval = CONFI['validation_interval']
-
 output_activation = torch.nn.Softmax(dim=1)  # Sigmoid()Sigmoid()#Softmax(dim=1)
 output_activation.name = "Softmax"
-
 val_dataset = MultiViewDataset(
     val_csv_path,
     views=views,
@@ -155,7 +138,6 @@ print(f"Test Feature_extraction: {test_dataset.Feature_extraction}")
 
 print(f"Image_mode={CONFI['IMAGE_MODE']}")
 
-
 non_trial_writter = loggers.TensorBoardLogger(
     save_dir=non_trail_hp_writer,
     version=CONFI['logger_version'],
@@ -164,19 +146,14 @@ non_trial_writter = loggers.TensorBoardLogger(
     log_graph=False,
 )
 
-
 H = CONFI['H']
 print("height:", H)
-
 W = CONFI['W']
 print("height:", W)
-
 num_neurons_2 = CONFI["NUM_NEURONS"]
 print("num_neurons_2:", num_neurons_2)
-
 num_layers = CONFI["NLAYERS"]
 print("num_layers:", num_layers)
-
 INFERENCE_CKPT_PATH = CONFI["INFERENCE_CKPT_PATH"]
 print("INFERENCE_CKPT_PATH:", INFERENCE_CKPT_PATH)
 
@@ -458,27 +435,6 @@ class infer(LightningModule):
                 if ((target == pred) & (target == 0))
                 else Prediction_Def.append(0)
             )
-            # if CONFI['Extract_Gradcam']:
-            #     #target_1 = target_.cpu().argmax(axis=1).numpy()
-            #     #pred_1 = pred_.cpu().argmax(axis=1).numpy()
-            #     match_indices = np.where((pred_1 == target_1) )#& (pred_1 == 0)
-            #     #match_indices = np.where(match_indices == 0)
-            #     match_indices = torch.as_tensor(match_indices)            
-            #     #if pred_1[0] == target_1[0] == 0:
-            #     global iteration_count
-            #     iteration_count += 1
-            #     instance = grad_cam(
-            #     iter = iteration_count,
-            #     backbone = self.backbone,
-            #     logger_version=CONFI["logger_version"], 
-            #     x2=x2,
-            #     match_indices=match_indices, 
-            #     Gradcam_save_dir=Gradcam_save_dir, 
-            #     val_batch=batch,
-            #     )
-            #     instance.grad_image()
-
-
         return y
 
 
