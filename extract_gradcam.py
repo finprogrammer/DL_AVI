@@ -103,25 +103,6 @@ class grad_cam(object):
                     save_path_img = os.path.join(folder, filename)
                     img.save(save_path_img)
 
-                    ###save original image
-                    # raw_image = raw_image.squeeze(0)
-                    # view1 = raw_image
-                    # img_n = view1.cpu().numpy()
-                    # print(view1.shape)
-                    # max_value = np.max(img_n)
-                    # img_n = view1.cpu().numpy()
-                    # max_value = np.max(img_n)
-                    # img = view1 / max_value
-                    # transform_to_pil = T.Compose([T.ToPILImage()])
-                    # img = transform_to_pil(img)
-                    # filename = self.val_batch["image_name_string"]
-                    # filename = filename[j]
-                    # filename = filename.replace('images/', '')
-                    # filename = filename.replace('.jpg', '')                                  
-                    # filename = f"original_image__{self.logger_version}__{filename}.jpg"
-                    # save_path_img = os.path.join(folder, filename)
-                    # img.save(save_path_img)
-
                     ###combine original and the gradcam image for class 0
                     original_image = cv2.imread(save_path_img)
                     cam_image = cv2.imread(save_path_class_0)
