@@ -58,7 +58,6 @@ folder_maker = make_folder(
     base_dir=CONFI["base_dir"],
 )
 
-
 (
     non_trail_hp_writer,
     trail_hp_writer,
@@ -71,7 +70,6 @@ folder_maker = make_folder(
     Reconstructed_image_save_dir, 
     Gradcam_save_dir
 ) = folder_maker.create_folders(base_dir=CONFI["base_dir"])
-
 
 ###paramters
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -92,7 +90,6 @@ H = CONFI["H"]
 print("height:", H)
 W = CONFI["W"]
 print("height:", W)
-
 
 ###dataloader
 ROOT_DIR = os.path.join(
@@ -157,7 +154,6 @@ for i, val in enumerate(train_dataset.data):
     # assuming one-hot encoding
     class_ = np.argmax(label)
     class_counts[class_] += 1
-
 class_weights = [round(1000.0 / count, 3) for count in class_counts]
 class_weights = torch.tensor(class_weights).to(device)
 print(class_weights)
@@ -196,12 +192,10 @@ non_trial_writter = loggers.TensorBoardLogger(
 
 skip_optuna = CONFI["SKIP_OPTUNA"]
 if not skip_optuna:
-
     pruner = optuna.pruners.MedianPruner(
         n_startup_trials=4, n_warmup_steps=5
     )  #optuna.pruners.NopPruner()
     optimizer = None
-
     def objective(trial):
         lr = trial.suggest_float("lr", 1e-6, 1e-1, log=True)
         weight_decay = trial.suggest_uniform("weight_decay", 1e-5, 1e-1)
@@ -222,7 +216,6 @@ if not skip_optuna:
         dropout = trial.suggest_float("dropout_p", 0.2, 0.7)
         model_used = CONFI["Model"]
         #model.name = model_used
-
 
         if CONFI["Model"] == "Dinov2":
             dinov2_vits14 = torch.hub.load("facebookresearch/dinov2", "dinov2_vits14")
@@ -410,41 +403,29 @@ else:
     ##manual trial rerun
     best_lr = CONFI["LR"]
     print("Best learning rate:", best_lr)
-
     optimizer_idx = 0
     optimizer_names = ["AdamW", "RMSprop", "SGD", "Adagrad"]
     best_optimizer = optimizer_names[optimizer_idx]
     print("Best Optimizer:", best_optimizer)
-
     best_dropout = CONFI["DROPOUT"]
     print("Best Dropout:", best_dropout)
-
     best_patience = CONFI["PATIENCE"]
     print("Best patience:", best_patience)
-
     best_patience_lr = CONFI["PATIENCE_LR"]
     print("Best patience:", best_patience_lr)
-
     H = CONFI["H"]
     print("height:", H)
-
     W = CONFI["W"]
     print("height:", W)
-
     best_weight_decay = CONFI["WD"]
     print("Best Weight Decay:", best_weight_decay)
-
     print(f"MINDELTA={CONFI['MINDELTA']}")
-
     best_dropout = CONFI["DROPOUT"]
     print("Best Dropout:", best_dropout)
-
     num_layers = CONFI["NLAYERS"]
     print("num_layers:", num_layers)
-
     num_neurons_2 = CONFI["NUM_NEURONS"]
     print("num_neurons_2:", num_neurons_2)    
-
     model_used = CONFI["Model"]
     print(model_used)
 
@@ -476,10 +457,8 @@ else:
             backbone_out_features = getattr(model, CONFI["BACKBONE"]).out_features
 
     model.name = model_used
-    
     best_nlayers = CONFI["NLAYERS"]
     print("Best nlayers:", best_nlayers)
-
     best_endlayers = CONFI["ENDLAYERS"]
     print("Best endlayers:", best_endlayers)
 
@@ -680,9 +659,9 @@ else:
     skip_misclassification = CONFI['SKIP_MISCLASSIFY']
     if not skip_misclassification:
         pred_val, selected_values_val, pred_def_val, selected_values_def_val = validation_processor.process_samples(Predictions_v, Prediction_Def_v, Indices_v, Indices_Def_v, dataval)
-        # Call the plot_validation_samples method
+        # plot_validation_samples method
         validation_processor.plot__samples(ROOT_DIR, selected_values_def_val, selected_values_val, pred_val, pred_def_val, Misclassification_save_dir)
-        # Call the compute_validation_list method
+        # compute_validation_list method
         validation_processor.compute_list(dataval, FP_V, FN_V)
 
         print(
@@ -690,7 +669,7 @@ else:
         )
         test_processor = Data_post_Processor(Indices_T, Predictions_T, Indices_Def_T, Prediction_Def_T, FP_T, FN_T, datatest, dataval)
         pred_val, selected_values_val, pred_def_val, selected_values_def_val = test_processor.process_samples(Predictions_T, Prediction_Def_T, Indices_T, Indices_Def_T, datatest)
-        # Call the plot_validation_samples method
+        # plot_validation_samples method
         test_processor.plot__samples(ROOT_DIR, selected_values_def_val, selected_values_val, pred_val, pred_def_val, Misclassification_save_dir)
-        # Call the compute_validation_list method
+        # compute_validation_list method
         test_processor.compute_list(datatest, FP_T, FN_T)
