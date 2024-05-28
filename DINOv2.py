@@ -216,27 +216,7 @@ for i, val in enumerate(train_dataset.data):
 sampler = WeightedRandomSampler(
     weights=sample_weights, num_samples=len(train_dataset), replacement=True
 )
-# class DinoVisionTransformerClassifier(nn.Module):
-#     def __init__(self, val=False, Test=False):
-#         super(DinoVisionTransformerClassifier, self).__init__()
-#         self.transformer = dinov2_vits14
-#         self.val = val
-#         self.Test = Test
-#         # self.dropout = nn.Sequential(nn.Dropout(p=CONFI.DROPOUT))
-#         in_features = 384
-#         self.classifier1 = nn.Sequential(
-#             nn.Linear(in_features, 256),
-#             # nn.Linear(291, 431)
-#         )
 
-#     def forward(self, x):
-#         x = self.transformer(x)
-#         x = self.transformer.norm(x)
-#         x = self.classifier1(x)
-#         return x
-
-
-# model = DinoVisionTransformerClassifier(val=False, Test=False)
 
 
 ##hyperparameters
@@ -484,34 +464,7 @@ else:
         # profiler="simple"
     )
 
-    # dinov2_vits14 = torch.hub.load("facebookresearch/dinov2", "dinov2_vits14")
-
-    # class DinoVisionTransformerClassifier(nn.Module):
-    #     def __init__(self):
-    #         super(DinoVisionTransformerClassifier, self).__init__()
-    #         self.transformer = dinov2_vits14
-    #         in_features = 384
-    #         layers = []
-    #         input_size = in_features
-    #         layers.append(nn.Linear(input_size, num_neurons_2[0]))
-    #         if self.training:
-    #             layers.append(nn.Dropout(p=best_dropout))
-    #         for i in range(1, num_layers):
-    #             layers.append(
-    #                 nn.Linear(num_neurons_2[i - 1], num_neurons_2[i])
-    #             )  # Connecting layers with different neuron counts
-    #             layers.append(nn.ReLU())
-    #         input_size = num_neurons_2[-1]
-    #         layers.append(nn.Linear(input_size, 1))
-    #         self.classifier = nn.Sequential(*layers)
-
-    #     def forward(self, x):
-    #         x = self.transformer(x)
-    #         x = self.transformer.norm(x)
-    #         x = self.classifier(x)
-    #         return x
-        
-    # model = DinoVisionTransformerClassifier()  
+ 
     dinov2_vits14 = torch.hub.load("facebookresearch/dinov2", "dinov2_vits14")
 
     class DinoVisionTransformerClassifier(nn.Module):
